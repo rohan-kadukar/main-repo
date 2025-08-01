@@ -3,24 +3,30 @@ name: Sync to copy-main-repo
 on:
   push:
     branches:
-      - main  # or your default branch
+      - main
 
 jobs:
   sync:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout with full history
+      - name: Checkout full repo
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Fetch full history for pushing
+          fetch-depth: 0
 
-      - name: Push code to copy-main-repo using PAT
-        env:
-          TARGET_REPO_PAT: ${{ secrets.TARGET_REPO_PAT }}
+      - name: Print debug info
         run: |
-          git config --global user.name "rohan-kadukar"
+          echo "✅ Secret check: ${TOKEN_EXISTS}"
+        env:
+          TOKEN_EXISTS: ${{ secrets.TARGET_REPO_PAT != '' }}
+
+      - name: Push to copy-main-repo using PAT
+        env:
+          PAT: ${{ secrets.TARGET_REPO_PAT }}
+        run: |
+          git config --global user.name "Rohan Kadukar"
           git config --global user.email "rohankadukar123@gmail.com"
 
-          git remote add target https://x-access-token:${TARGET_REPO_PAT}@github.com/rohan-kadukar/copy-main-repo.git
+          git remote add target https://x-access-token:${PAT}@github.com/rohan-kadukar/copy-main-repo.git
           git push --force target main
