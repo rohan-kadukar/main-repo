@@ -3,14 +3,17 @@ name: Sync to copy-main-repo
 on:
   push:
     branches:
-      - main
+      - main  # or your default branch
 
 jobs:
   sync:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout main-repo
+      - name: Checkout with full history
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch full history for pushing
 
       - name: Push code to copy-main-repo using PAT
         env:
@@ -18,9 +21,6 @@ jobs:
         run: |
           git config --global user.name "Rohan Kadukar"
           git config --global user.email "rohankadukar123@gmail.com"
-
-          # Remove remote if exists
-          git remote remove target || true
 
           git remote add target https://x-access-token:${TARGET_REPO_PAT}@github.com/rohan-kadukar/copy-main-repo.git
           git push --force target main
