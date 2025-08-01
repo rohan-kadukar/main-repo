@@ -3,7 +3,7 @@ name: Sync to copy-main-repo
 on:
   push:
     branches:
-      - main  # Change if your branch name is different
+      - main
 
 jobs:
   sync:
@@ -12,12 +12,12 @@ jobs:
       - name: Checkout main-repo
         uses: actions/checkout@v3
 
-      - name: Push code to copy-main-repo
+      - name: Push code to copy-main-repo using PAT
         env:
-          PAT: ${{ secrets.TARGET_REPO_PAT }}
+          TARGET_REPO_PAT: ${{ secrets.TARGET_REPO_PAT }}
         run: |
           git config --global user.name "Rohan Kadukar"
           git config --global user.email "your-email@example.com"
 
-          git remote add target https://x-access-token:${PAT}@github.com/rohan-kadukar/copy-main-repo.git
+          git remote add target https://x-access-token:${TARGET_REPO_PAT}@github.com/rohan-kadukar/copy-main-repo.git
           git push --force target main
